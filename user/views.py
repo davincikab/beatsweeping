@@ -59,6 +59,7 @@ def faq_view(request):
 def contacts_page(request):
     return render(request, "contacts.html")
 
+# Process Street section data
 def process_data(data):
     streets = []
 
