@@ -39,6 +39,22 @@ body {
     text-shadow: 1px 1px 1px black;
 }
 
+p {
+    color: black;
+    border:1px; 
+    border-style:solid; 
+    border-color:#FFFFFF;
+    box-shadow: 1.25px .7px 2px black;
+    /*background-color: yellow;*/
+    background: rgba(80, 115, 161, .4);
+    /* rgba(51, 170, 51, .7) */
+    padding: .5em;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 28px;
+    font-size: 1rem;
+}
+
 /* utilities */
 .text-small {
     font-size: 0.8rem;

@@ -1,7 +1,7 @@
 from django.urls import path, re_path
 
 from .views import update_profile, register, faq_view, contacts_page, email_sent, activate_account, \
-    Login, Logout, password_reset, user_section
+    Login, Logout, password_reset, user_section, disable_notifications
 
 from django.contrib.auth import views as auth_views
 
@@ -17,6 +17,7 @@ urlpatterns = [
     path("", register, name="register"),
     path('login/', Login.as_view(), name='login'),
     path('logout/', Logout .as_view(), name='logout'),
+    path('disable_notification/', disable_notifications, name='disable-notification'),
 
     # password reset
     path('accounts/password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),

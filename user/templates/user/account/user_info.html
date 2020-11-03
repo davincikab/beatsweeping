@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container-fluid mt-5">
+    <div class="container-fluid">
         <div class="container mt-2">
             <div class="row">
                 {% if user_info.info%}
@@ -26,6 +26,7 @@
                             {% else %}
                                 <h5>Notification Disabled</h5>
                             {% endif %}
+                            
                             <label class="switch ">
                                 <input type="checkbox" name="notify" id="notify">
                                 <small class="slider"></small>

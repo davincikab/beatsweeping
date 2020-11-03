@@ -7,9 +7,14 @@ from django.utils import timezone
 import uuid
 
 class CustomUser(AbstractUser):
+    SMS_TIME = (
+        ('Y', 'Yes'),
+        ('N', 'No')
+    )
     username = models.CharField("Username", max_length=50, unique=True)
     email = models.EmailField("Email", max_length=254, unique=True)
-    is_subscribed = models.BooleanField('Is Subscribed', default=True)
+    is_subscribed = models.CharField("Subscription", default='N', max_length=5, choices=SMS_TIME)
+    disabled_notification = models.CharField("Notification", max_length=50, default='N')
 
     USER_NAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']

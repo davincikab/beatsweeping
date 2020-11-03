@@ -227,5 +227,27 @@ def user_section(request):
         user_info = {'uuid':user.pk, 'is_subscribed':user.is_subscribed}
 
     print(user_info)
-    return render(request, 'user/account/user_info.html', {'user_info':user_info })
+    return render(request, 'user/account/user_info.html', {'user_info':user_info, 'notify':user.disabled_notification})
 
+
+def disable_notifications(request):
+    user = request.user
+    if request.method == 'POST':
+        # update the userpreform
+        notification_state = request.POST.get('notify')
+        user = CustomUser.objects.get(email=user.email)
+        user.disabled_notification = notification_state
+        user.email_notification = notification_state
+        user.save()
+
+        # update profile form
+        user_profiles = UserProfile.objects.filter(email = user.email)
+        for user_profile in user_profiles:
+            user_profile.disabled = notification_state
+            user_profile.email_notification = notification_state
+            user_profile.save()
+
+    return HttpResponse(json.dumps({'message':'success', 'navigate_to':f'/user_profile/'}))
+
+
+# PAYMENT
