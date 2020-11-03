@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %} Map {% endblock %}
+{% block title %} Street Sweeping Map {% endblock %}
 {% block styles %}
 <link href="https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css" type="text/css" />
@@ -16,10 +16,10 @@
 
     <div class="col-md-4">
         <!-- Form section -->
-        <form action="" id="form" class="form-horizontal">
+        <form action="" id="form" class="form-horizontal" method="POST">
             {% csrf_token %}
             <h4 >Sign Up</h4>
-
+            <div class="mt-1 px-2" id="street-form"></div>
             {% if data %}
                     <div class="input-group ml-2" style="display: none;">
                         <div class="input-group-prepend">
@@ -87,6 +87,7 @@
 
 {% block javascript %}
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
     <script src="https://npmcdn.com/@turf/turf@5.1.6/turf.min.js"></script>
     <script src="{% static 'js/map.js' %}"></script>
 {% endblock %}
