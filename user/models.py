@@ -9,6 +9,7 @@ import uuid
 class CustomUser(AbstractUser):
     username = models.CharField("Username", max_length=50, unique=True)
     email = models.EmailField("Email", max_length=254, unique=True)
+    is_subscribed = models.BooleanField('Is Subscribed', default=True)
 
     USER_NAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']

@@ -1,0 +1,27 @@
+.list-group-item {
+    font-size: 0.8em;
+    padding:0em 1em;
+}
+.col-md-6 {
+
+}
+
+.card p {
+    font-size: 0.9rem;
+    display:flex;
+    justify-content:space-between;
+    color:var(--black);
+}
+
+p > span {
+    font-weight:500;
+}
+
+.list-group-item {
+    font-size: 0.9rem;
+    padding:0.5em 0.8em;
+}
+
+h5 {
+    font-size:1rem
+}

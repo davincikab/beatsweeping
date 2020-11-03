@@ -1,17 +1,20 @@
 from django.urls import path, re_path
 
-from .views import home, register, faq_view, contacts_page, email_sent, activate_account, Login, Logout, password_reset
+from .views import update_profile, register, faq_view, contacts_page, email_sent, activate_account, \
+    Login, Logout, password_reset, user_section
+
 from django.contrib.auth import views as auth_views
 
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path("", home, name="home"),
+    path("update_profile", update_profile, name="update-profile"),
     path('contacts/', contacts_page, name='contacts'),
     path('faqs/', faq_view, name='faq-view'),
+    path('user_profile/', user_section, name='user-profile'),
 
-    path("register/", register, name="register"),
+    path("", register, name="register"),
     path('login/', Login.as_view(), name='login'),
     path('logout/', Logout .as_view(), name='logout'),
 

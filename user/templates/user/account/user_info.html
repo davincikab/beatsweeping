@@ -1,34 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block title %} Street Sweeping User Info {% endblock %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/user_info.css' %}">
+{% endblock %}
+
 {% block content %}
-    <style>
-        .list-group-item {
-            font-size: 0.8em;
-            padding:0em 1em;
-        }
-        .col-md-6 {
-            {% comment %} padding:0; {% endcomment %}
-        }
-
-        .card p {
-            font-size: 0.9rem;
-            display:flex;
-            justify-content:space-between;
-            color:var(--black);
-        }
-
-        p > span {
-            font-weight:500;
-        }
-
-        .list-group-item {
-            font-size: 0.9rem;
-            padding:0.5em 0.8em;
-        }
-
-        h5 {
-            font-size:1rem
-        }
-    </style>
     <div class="container-fluid mt-5">
         <div class="container mt-2">
             <div class="row">
@@ -59,7 +36,7 @@
 
                     {% if user_info.info %}
                         <small class="text-small">Click below to change your streets and settings</small><br>
-                        <a class="btn cust-btn mt-2" href="{% url 'update-profile' user_info.uuid %}">
+                        <a class="btn cust-btn mt-2" href="{% url 'update-profile' %}">
                             <small>Update Info</small>
                         </a>
                     {% endif %}
@@ -92,9 +69,7 @@
                                 </div>
                                 
                             {% else %}
-                            <a class="btn cust-btn mt-2 px-4" href="{% url 'process-payment' user_info.uuid  %}">
-                                <small>Subscribe</small>
-                            </a>
+                           
                              {% endif %}
                         </div>
                     
@@ -106,6 +81,8 @@
         
         
     </div>
+{% endblock %}
+{% block javascript %}
     <script>
         var notificationCheckbox = $('#notify');
         var notificationValue = '{{notify}}';
@@ -120,7 +97,6 @@
             notificationCheckbox.attr('checked', false);
         }
 
-        {% comment %} Deactivate Notification {% endcomment %}
         notificationCheckbox.on('change', function(e){
             let notify = notificationCheckbox;
             let val = notify.prop('checked');
@@ -139,6 +115,7 @@
             console.log(data);
            $('.spinner-message').text("Saving data ..."); 
            $('.spinner-container').toggleClass("d-none");
+
            $.ajax({
                 url:'/disable_notification/',
                 data:data,

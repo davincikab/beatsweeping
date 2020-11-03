@@ -7,6 +7,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib import messages
 from django.conf import settings
 from django.core import serializers
+from django.contrib.auth.decorators import login_required
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
@@ -24,7 +25,8 @@ import datetime
 import json
 
 # Create your views here.
-def home(request):
+@login_required
+def update_profile(request):
     if request.POST:
         user = request.user
         streets_data = process_data(request.POST)
@@ -94,8 +96,11 @@ def register(request):
                 'token':account_activation_token.make_token(user)
             })
 
+            # send mail
             mail_response = send_activation_mail(email, message, 'Account Activation')
             print(mail_response)
+
+            # mail response
             if mail_response != "Success":
                 return mail_response
 
@@ -200,4 +205,27 @@ def password_reset(request):
     return render(request, 'user/registration/password_reset_form.html', {'form':form})
 
 
+# User profile section
+@login_required 
+def user_section(request):
+    user = request.user
+
+    user_profile = UserProfile.objects.filter(email=user.email)
+    print(user_profile)
+    # Create  a dictionary with user info
+    user_info = {'sections':[], 'uuid':user.pk}
+    i = 1
+    for entry in user_profile:
+        print(entry)
+        user_info['sections'].append(entry.section_name)
+        i += 1
+    
+    # add other information
+    if len(user_info['sections']) > 0:
+        user_info = {**user_info, 'info':user_profile[0], 'is_subscribed':user.is_subscribed}
+    else:
+        user_info = {'uuid':user.pk, 'is_subscribed':user.is_subscribed}
+
+    print(user_info)
+    return render(request, 'user/account/user_info.html', {'user_info':user_info })
 

@@ -47,3 +47,95 @@ body {
 .bg-brand {
     background-color: var(--brand-color) !important;
 }
+
+.btn {
+    border-radius:0;
+    font-size:0.9rem;
+    background-color:var(--blue);
+    border:none;
+    color:var(--white);
+}
+
+.cust-btn{
+    position:relative;
+}
+
+.cust-btn::after {
+    background-color:#2a758c;
+    width:0;
+    transition:0.4s;
+    content:"";
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:50%;
+    right:50%;
+    opacity:0;
+}
+
+.cust-btn:hover::after{
+    width:100%;
+    opacity:1;
+    left:0%;
+    right:0;
+}
+
+.cust-btn:hover {
+    color:white;
+}
+
+.cust-btn > small {
+    font-size: 90%;
+    font-weight: 400;
+    z-index: 2;
+    position: relative;
+}
+
+/* Switch */
+.switch {
+    position:relative;
+    height:23px;
+    width:50px;
+}
+
+.switch input {
+    height:0;
+    width:0;
+    opacity:0;
+}
+
+.slider {
+    position:absolute;
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+    background:#ccc;
+    transition:0.4s;
+    cursor:pointer;
+    border-radius:30px;
+}
+
+.slider:before {
+    position:absolute;
+    content:"";
+    height:18px;
+    width:16px;
+    left:4px;
+    bottom:3px;
+    transition:0.4s;
+    background-color:white;
+    border-radius:30px;
+}
+
+input:checked + .slider {
+    background:var(--brand-color);
+}
+
+input:focus + .slider:before {
+    box-shadow:0 0 1px var(--brand-color);
+}
+
+input:checked + .slider:before {
+    transform:translateX(26px);
+}
