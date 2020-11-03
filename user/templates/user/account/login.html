@@ -63,8 +63,7 @@
         </div>
 
         <small class="mt-5">Forgot Password ? <a href="{% url 'password_reset' %}">Reset Password. </a></small>
-        <small class="mt-5">Forgot Username ? <a href="{% url 'get-username' %}">Get Username</a></small>
-        
+               
     <!-- </div> -->
     </form>
 
@@ -77,20 +76,6 @@
   <script>
         $('.spinner-message').text("Saving data ..."); 
         $('.spinner-container').toggleClass("d-none");
-
-        var inputs = document.querySelectorAll("input:not([type='checkbox'])");
-
-        function addClassFormControl(inputs) {
-            inputs.forEach(input => {
-                if(!input.classList.contains('form-control')){
-                    input.classList.add('form-control', 'form-control-sm');
-                    input.classList.add('form-control-sm');
-                }
-                                
-            });
-        }
-
-        addClassFormControl(inputs);
     </script>
 
 {% endblock %}

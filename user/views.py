@@ -1,5 +1,18 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
+
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib import messages
+from django.conf import settings
+from django.core import serializers
+
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.template.loader import render_to_string
+
+from .token_generator import account_activation_token
+from .send_mail import send_activation_mail
 
 from .models import CouponCode, CustomUser, UserProfile
 from .forms import SignUpForm, UserProfileForm
@@ -12,6 +25,12 @@ import json
 def home(request):
     form = SignUpForm()
     return render(request, "index.html", {'form':form})
+
+class Login(LoginView):
+    template_name = 'user/account/login.html'
+
+class Logout(LogoutView):
+    template_name = 'user/account/logout.html'
 
 def register(request):
     if request.POST:
@@ -41,6 +60,19 @@ def register(request):
                 return JsonResponse({'message':'error', 'errors':form.errors})
 
             # send mail
+            current_site = get_current_site(request)
+            message = render_to_string('activate_account.html', {
+                'user':user,
+                'domain':current_site.domain,
+                'uid':force_text(urlsafe_base64_encode(force_bytes(user.pk))),
+                'token':account_activation_token.make_token(user)
+            })
+
+            mail_response = send_activation_mail(email, message, 'Account Activation')
+            print(mail_response)
+            if mail_response != "Success":
+                return mail_response
+
             return JsonResponse({'message':'success', 'navigate_to':f'/activation_email/'})
         else:
             return JsonResponse({'message':'error', 'errors':form.errors})
@@ -106,3 +138,36 @@ def create_update_profile(entries, email):
     else:
         print(form.errors)
         return HttpResponse("Error")
+
+# Activate user Account
+def activate_account(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        print(uid)
+        user = CustomUser.objects.get(pk = uid)
+    except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+        user = None
+
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, message='Your account has been activated successfully')
+
+        # login the user and redirect to payment page
+        return redirect(f'/contacts/')
+
+        # return HttpResponse('Your account has been activated successfully')
+    else:
+        return HttpResponse("Invalid activation link")
+ 
+
+def password_reset(request):
+    if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            form.save(request=request)
+            return redirect(reverse('password_reset_done'))
+    else:
+        form = PasswordResetForm()
+    return render(request, 'user/registration/password_reset_form.html', {'form':form})
+
