@@ -36,18 +36,16 @@
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{% url 'contacts' %}">Contact</a>
                     </li>
-
-                   
                 </ul>
                 <ul class="navbar-nav mr-auto">
                     {% if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link text-white" href="">{{user.username}}</a></li>
                      <li class="nav-item">
-                       
+                        <a class="nav-link text-white" href="{% url 'logout' %}">Logout</a>
                      </li>
                      {% else %}
                       <li class="nav-item">
-                             
+                             <a href="{% url 'login' %}" class="nav-link text-white">Login</a>
                      </li>
                     {% endif %}
                 </ul>

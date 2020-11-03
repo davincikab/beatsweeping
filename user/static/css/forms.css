@@ -1,0 +1,20 @@
+.container {
+    padding-top: 10vh;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+form {
+    margin: 10px auto;
+    box-shadow: 1px 1px 0.2em #2b2a2add;
+    padding: 1em;
+    min-width: 35vw;
+}
+
+.submit-section {
+    display: flex;
+    justify-content: center;
+}

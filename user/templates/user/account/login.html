@@ -1,24 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block title %} Login {% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
+
 {% block content %}
-<style>
-    .container {
-        padding-top:10vh;
-        font-size:0.9rem;
-        height:100vh;
-    }
-
-    form {
-        margin:10px auto;
-        box-shadow:0.1em 0.1em 0.4em #2b2a2add;
-        padding:2em;
-    }
-
-    .submit-section {
-        display: flex;
-        justify-content: center;
-    }
-</style>
 <div class="container ">
     {% if next %} 
         {{next}}
@@ -46,7 +34,7 @@
             {{ form.username }} 
         </div>
 
-        <div class="input-group input-group-sm">
+        <div class="input-group input-group-sm mt-3">
             <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon1">
                     {{ form.password.label }}
@@ -57,7 +45,7 @@
         </div>
 
         <div class="input-group input-group-sm my-3 submit-section">
-            <button class="btn cust-btn w-50">
+            <button class="btn  bg-brand w-50">
                 <small>Login</small>
             </button>
         </div>

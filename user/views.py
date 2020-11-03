@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth import authenticate, login
 
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib import messages
@@ -15,7 +17,7 @@ from .token_generator import account_activation_token
 from .send_mail import send_activation_mail
 
 from .models import CouponCode, CustomUser, UserProfile
-from .forms import SignUpForm, UserProfileForm
+from .forms import SignUpForm, UserProfileForm, PasswordResetForm
 
 
 import datetime
@@ -23,7 +25,17 @@ import json
 
 # Create your views here.
 def home(request):
-    form = SignUpForm()
+    if request.POST:
+        user = request.user
+        streets_data = process_data(request.POST)
+        message = create_update_profile(streets_data, user.email)
+
+        if message == "error":
+            return JsonResponse({'message':'error', 'errors':form.errors})
+        return JsonResponse({'message':'error', 'navigate_to':'/user_profile/'})
+
+    else:
+        form = UserProfileForm()
     return render(request, "index.html", {'form':form})
 
 class Login(LoginView):
@@ -154,6 +166,7 @@ def activate_account(request, uidb64, token):
         messages.success(request, message='Your account has been activated successfully')
 
         # login the user and redirect to payment page
+        login(request, user)
         return redirect(f'/contacts/')
 
         # return HttpResponse('Your account has been activated successfully')
@@ -170,4 +183,6 @@ def password_reset(request):
     else:
         form = PasswordResetForm()
     return render(request, 'user/registration/password_reset_form.html', {'form':form})
+
+
 
