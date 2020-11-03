@@ -1,13 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<style>
-    .container-fluid {
-        font-size:1rem;
-        overflow:hidden;
-    }
-
-</style>
 <div class="container-fluid">
     <div class="row">
         <div class="col-xs-2 col-md-6 side-panel">
@@ -43,16 +36,4 @@
         </div>
     </div>
 </div>
-
-<script>
-    var inputs = document.querySelectorAll('input');
-    inputs.forEach(input => {
-        if(!input.classList.contains('form-control')){
-            input.classList.add('form-control', 'form-control-sm');
-            input.classList.add('form-control-sm');
-        }
-        
-    });
-
-</script>
 {% endblock %}

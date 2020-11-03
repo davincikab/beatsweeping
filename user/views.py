@@ -1,11 +1,17 @@
 from django.shortcuts import render
 
+from .models import CouponCode, CustomUser, UserProfile
+from .forms import SignUpForm, UserProfileForm
+
 # Create your views here.
 def home(request):
-    return render(request, "base.html")
+    form = SignUpForm()
+    return render(request, "index.html", {'form':form})
 
 def register(request):
-    return render(request, "user/account/register.html")
+    form = SignUpForm()
+    user_profile = UserProfileForm()
+    return render(request, "index.html", {'form':form, 'form_details':user_profile})
 
 def faq_view(request):
     return render(request, "faq_views.html")

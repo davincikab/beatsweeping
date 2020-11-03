@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Map {% endblock %}
+{% block styles %}
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css" type="text/css" />
+<link rel="stylesheet" href="{% static 'css/map.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="row map-section">
+    <div class="col-md-8">
+        <div class="map" id="map"></div>
+    </div>
+
+    <div class="col-md-4">
+        <!-- Form section -->
+        <form action="" id="form" class="form-horizontal">
+            {% csrf_token %}
+            <h4 >Sign Up</h4>
+
+            {% if data %}
+                    <div class="input-group ml-2" style="display: none;">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">uuid</span>
+                        </div>
+
+                        <input type="tel" class="form-control" name="uidb64" id="uuid" value="">
+                    </div>
+            {% endif %}
+
+            <div class="px-2 mb-1" id="formdiv">
+                {% for field in form_details %}
+                {% if field.field.widget.input_type == 'checkbox' %}
+                    <div class="form-group my-2 mb-1 d-flex justify-content-between">
+                        {{ field.label }}
+                        <label class="switch ">
+                            {{field}}
+                            <small class="slider"></small>
+                        </label>
+                    </div>
+                {% elif field.label == 'Email' and title == 'Register'%}
+
+                {% else %}
+                    {% if field.help_text %}
+                        <small class="text-small ml-2">{{ field.help_text }}</small>
+                    {% endif %}
+                    <div class="input-group input-group-sm mb-1">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">
+                                {{ field.label }}
+                            </span>
+                        </div>
+                        
+                        {{ field }} 
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+           {% for field in form %}
+              {% if field.help_text %}
+                <small class="text-muted text-small ml-2">{{ field.help_text }}</small>
+              {% endif %}
+              <div class="input-group input-group-sm my-1">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">
+                            {{ field.label }}
+                        </span>
+                    </div>
+                    
+                    {{ field }} 
+                </div>
+            {% endfor %}
+            </div>
+
+            <div class="input-group ml-2">
+                <button type="submit" class="btn bg-brand text-white w-75 px-3 mt-2">
+                    <small>Submit</small>
+                </button>
+            </div>
+        </form>
+        
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+    <script src="https://npmcdn.com/@turf/turf@5.1.6/turf.min.js"></script>
+    <script src="{% static 'js/map.js' %}"></script>
+{% endblock %}

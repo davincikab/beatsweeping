@@ -1,0 +1,16 @@
+#map{
+    height: 94vh;
+    width: 100%;
+}
+
+.form-horizontal h4 {
+    margin: 0;
+    text-align: center;
+}
+
+@media (min-width:50em) {
+    #map {
+        position: sticky;
+        top:0;
+    }
+}

@@ -1,4 +1,4 @@
-var inputs = document.querySelectorAll("input:not([type='checkbox'])");
+var inputs = document.querySelectorAll("select, input:not([type='checkbox'])");
 
 function addClassFormControl(inputs) {
     inputs.forEach(input => {
