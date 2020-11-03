@@ -30,13 +30,27 @@ def home(request):
         streets_data = process_data(request.POST)
         message = create_update_profile(streets_data, user.email)
 
-        if message == "error":
-            return JsonResponse({'message':'error', 'errors':form.errors})
-        return JsonResponse({'message':'error', 'navigate_to':'/user_profile/'})
+        if message != "Success":
+            return message
+        return JsonResponse({'message':'success', 'navigate_to':'/contacts/'})
 
     else:
-        form = UserProfileForm()
-    return render(request, "index.html", {'form':form})
+        user = request.user
+        user_profile = UserProfile.objects.filter(user_id = user.pk)
+        sections = [f'{entry.section_name}_{entry.oid}' for entry in user_profile]
+        phone_number = user_profile[0].phone_number
+
+        # phone_number = phone_number[1:4]+'-'+phone_number[4:7]+'-'+phone_number[7:]
+        data = {
+            'phone_number':phone_number,
+            'email':user_profile[0].email,
+            'twelve_hours':user_profile[0].twelve_hours,
+            'one_hour':user_profile[0].one_hour,
+            'email_notification':user_profile[0].email_notification
+        }
+
+        form = UserProfileForm(data)
+    return render(request, "index.html", {'form':form, 'sections':sections, 'uuid':user.pk})
 
 class Login(LoginView):
     template_name = 'user/account/login.html'
@@ -133,6 +147,7 @@ def create_update_profile(entries, email):
 
     # process data
     if form.is_valid():
+        [ profile.delete()  for profile in UserProfile.objects.filter(email=email) ]
         for entry in entries:
             user_profile_form = UserProfileForm(entry)
             info = user_profile_form.save(commit=False)
@@ -140,16 +155,16 @@ def create_update_profile(entries, email):
             info.oid = entry.get('oid')
             info.section_name = entry.get('section_name')
             info.name = entry.get('name', 'None')
-            info.email = entry.get('email')
+            info.email = email
             info.date_registered = datetime.datetime.now()
             info.user_id = user.id
 
             print("Saved")
             info.save()
-        return HttpResponse("Success")
+        return "Success"
     else:
         print(form.errors)
-        return HttpResponse("Error")
+        return JsonResponse({"message":"error", 'errors':form.errors })
 
 # Activate user Account
 def activate_account(request, uidb64, token):

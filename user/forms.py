@@ -44,7 +44,7 @@ class UserProfileForm(forms.ModelForm):
     phone_number = forms.CharField(label="Phone Number", max_length=13, required=True,
             help_text="Phone number format 9347897879",
             widget=forms.TextInput(
-                attrs={'placeholder':'9347897879', }
+                attrs={'placeholder':'9347897879', 'pattern':"[0-9]{10}"}
             )
         )
          

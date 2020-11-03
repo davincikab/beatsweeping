@@ -1,5 +1,9 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoicmFtejg1OCIsImEiOiJjazl1N3ZxYnUxa2dlM2dtb3ozemhtZWJ2In0.c7Pc5LCE0rvGoJ6hZYEftg';
 var values=[];
+
+var userData = eval($("#sections").text());
+
+console.log(userData);
 var bounds = [
     [-117.368317,32.650938], // Southwest coordinates
     [-117.020874,32.938386] // Northeast coordinates
@@ -236,6 +240,70 @@ map.on('load', function(e) {
      $('.spinner-container').toggleClass("d-none");
 });
 
+// filter the sourcdata
+function filterSources(e){
+    // console.log(e);
+    if (e.sourceId == 'route' && e.isSourceLoaded && !e.hasOwnProperty('sourceDataType')){
+        
+        // filter the data 
+        if(typeof userData  == 'object' && selectedRoads.features.length < 4){
+            // update the map view to the first feature
+            filterFields = userData.map(field => field.split('_')[1]);
+            filterData();
+            
+        } 
+    }
+}
+
+function filterData(){
+    // filter the data with specific oid
+    filterFields = userData.map(field => field.split('_')[1]);
+
+    console.log(filterFields);
+    if(selectedRoads.features[0] && filterFields[0]) {
+        selectedRoads.features = [];
+    }
+
+    // filter the data
+    filterFields.forEach(oid => {
+        // let feature = data.features.find(feature => feature.properties.oid == oid);
+        var feature = map.querySourceFeatures('route',{
+            //old no dl time
+            sourceLayer:'csvnew',
+            //sourceLayer:'CMB_NOTSIMPLE_2-coho6z',
+            
+            filter:["==","oid", parseInt(oid)]
+        });
+
+        if(feature[0]){
+            if(selectedRoads.features.length <= 4) {
+                console.log(feature[0]);
+                // update selected roads object
+                selectedRoads.features.push(feature[0]);
+
+                // update the form input
+                appendFormInput(feature[0].properties, 2);
+            }
+            
+        }
+    });
+
+    console.log(selectedRoads);
+    // updated selected Roads source
+    updateSelectedRoad(selectedRoads);
+    fitToDataBounds();
+}
+
+// fit to mapbounds
+function fitToDataBounds() {
+    var bbox = turf.bbox(selectedRoads);
+    map.fitBounds(bbox,{
+        padding:50
+    });
+}
+
+map.on('sourcedata', filterSources);
+
 // check if selected 
 function isFeatureSelected (feature, selectedRoads) {
     var featureClicked = selectedRoads.features.find(route => {
@@ -381,4 +449,38 @@ function saveData (data) {
             $('.spinner-container').toggleClass("d-none");
         }
     });
+}
+
+// add a pattent to input type phone_number
+var phoneNumber = document.getElementById('id_phone_number');
+if(phoneNumber) {
+    // phoneNumber.setAttribute('pattern', "[0-9]{10}");
+}
+
+// disable doubleClickZoom
+var hasTouchScreen = false;
+
+if ("maxTouchPoints" in navigator) { 
+    hasTouchScreen = navigator.maxTouchPoints > 0;
+} else if ("msMaxTouchPoints" in navigator) {
+    hasTouchScreen = navigator.msMaxTouchPoints > 0; 
+} else {
+    var mQ = window.matchMedia && matchMedia("(pointer:coarse)");
+
+    if (mQ && mQ.media === "(pointer:coarse)") {
+        hasTouchScreen = !!mQ.matches;
+    } else if ('orientation' in window) {
+        hasTouchScreen = true; // deprecated, but good fallback
+    } else {
+        // Only as a last resort, fall back to user agent sniffing
+        var UA = navigator.userAgent;
+        hasTouchScreen = (
+            /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
+            /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA)
+        );
+    }
+}
+
+if (hasTouchScreen) {
+    map.doubleClickZoom.disable();
 }

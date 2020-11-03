@@ -89,7 +89,7 @@
                     {% endfor %}
                 </p>
                 {% endfor %}
-                <button type="submit" class="btn cust-btn mt-3">
+                <button type="submit" class="btn bg-brand mt-3">
                     <small>Send Mail</small>
                 </button>
             </form>
@@ -97,19 +97,13 @@
         </div>
         </div>
 	</div>
+{% endblock %}
+
+{% block javascript %}
     <script>
         $('.spinner-message').text("Saving data ..."); 
         $('.spinner-container').toggleClass("d-none");
 
         $('textarea').addClass("form-control form-control-sm");
-        var inputs = document.querySelectorAll('input');
-
-        inputs.forEach(input => {
-            if(!input.classList.contains('form-control')){
-                input.classList.add('form-control', 'form-control-sm');
-                input.classList.add('form-control-sm');
-            }
-        });
-
     </script>
 {% endblock %}
