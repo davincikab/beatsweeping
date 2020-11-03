@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% block title %}Pay using PayPal{% endblock %}
+{% block content %}
+    <style>
+    #zoid-paypal-buttons-af25dbdfa5_mdu6mtm6mdm > iframe.component-frame {
+        z-index: 0 !important;
+    }
+    .col-md-2{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .card {
+        height: 100%;
+        height: 25vh;
+        overflow: hidden;
+        box-shadow: 2px 2px 0.2em #ddd;    
+        border-width: 0px;    
+    }
+
+    .card .card-header {
+        padding: .3rem 1.25rem;
+        text-align: center;
+        background-color: rgb(247 247 247);
+        color: #040404;
+        border-width: 0px;
+    }
+
+    .card-header h5 {
+        font-size: 1.05rem;
+        margin: 0;
+    }
+
+    .submit-section {
+        bottom: 0;
+        position: absolute;
+    }
+
+    .container-fluid.row {
+        padding: 0.9em 1em;
+    }
+
+    #zoid-paypal-buttons-e0bf576319_mti6mty6mte {
+        z-index: 1 !important;
+    }
+
+    @media(min-width: 50em) {
+        .container-fluid {
+            display: flex;
+            justify-content: center;
+        }
+        .card {
+            height: 100%;
+        }
+    }
+    </style>
+    <div class="container-fluid row W-50 mt-5">
+
+        <!-- <div class="col-md-2 text-center">
+            or
+        </div> -->
+        
+        <div class="col-md-4 mt-5">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="">Promo Code</h5>
+                </div>
+                <form class="form-horizontal" method="POST" id="promo-form">
+                    {% csrf_token %}
+                   <div class="form-group px-3">
+                        <label for="promo_code"></label>
+                       <input type="text" class="form-control form-control-sm" name="promo_code" 
+                            placeholder="Your Promo code ...." pattern="[0-9a-zA-Z]{5}" maxlength="5">
+                    </div>
+                    
+                    <div class="input-group  mt-2 submit-section">
+                        <button type="submit" class="btn cust-btn px-3 mt-2 w-100">
+                            <small>Submit</small>
+                        </button>
+                    </div>
+               </form>
+            </div>
+        </div>
+
+        <div class="col-md-4 mt-5">
+            <div class="card"> 
+                <div class="card-header">
+                    <h5 class="">Debit / Credit Cards</h5>
+                </div>
+                <div class="card-body">
+                    <div id="paypal-button-container"></div>
+                </div>
+                
+            </div>
+            {% csrf_token %}
+        </div>
+
+    </div>
+    
+    <script src="https://www.paypal.com/sdk/js?client-id=AYNY1EZahVCYNWDa_L5MLRTO3IOqE4V-vJfiYWFuX7JOMbDUDvJIs-YLDFefM0_mK1pGxDrxDGlRE-Xw&vault=true" data-sdk-integration-source="button-factory"></script>
+    <script>
+    var promoForm = document.getElementById("promo-form");
+    paypal.Buttons({
+        style: {
+            shape: 'rect',
+            color: 'gold',
+            layout: 'vertical',
+            label: 'subscribe',
+                            
+        },
+        createSubscription: function(data, actions) {
+            return actions.subscription.create({
+            'plan_id': 'P-8M253739RD267825AL4PR2CY'
+            });
+        },
+        onApprove: function(data, actions) {
+            // Notify the user on subscription 
+            alert(data.subscriptionID);
+            console.log(data);
+
+            updateUserSubscription(data);
+        },
+        onCancel:function(data) {
+            // redirect to cancel 
+            window.location.assign("{% url 'payment-cancelled' uuid %}");
+            console.log(data);
+        },
+        onError:function(error) {
+            // display the error message on snackbar 
+                console.log(Email);
+                alert(error);
+            }
+        }).render('#paypal-button-container');
+
+        $('.spinner-message').text("Saving data ..."); 
+        $('.spinner-container').toggleClass("d-none");
+
+
+        // function to send subscription info 
+        function updateUserSubscription(data) {
+            $('.spinner-container').toggleClass("d-none");
+
+            let token = $('input[name="csrfmiddlewaretoken"]').attr('value'); 
+            let dt = new Date();
+            
+            console.log(data);
+
+            let userData = {
+                'csrfmiddlewaretoken':token,
+                'subscription_id':data.subscriptionID,
+                'uuid':'{{ uuid }}',
+                'subscription_date':dt.toISOString()
+            };
+
+            $.ajax({
+                url:"{% url 'process-payment' uuid %}",
+                type:'POST',
+                data:userData,
+                success:function(response){
+                    console.log(response);
+                    let responseObj = JSON.parse(response)
+
+                    console.log(responseObj);
+                    if(responseObj.message == 'success') {
+                        window.location.assign("{% url 'user-profile' uuid %}");
+                    }
+
+                    $('.spinner-container').toggleClass("d-none");
+                },
+                error:function(error) {
+                    console.log(error);
+                    $('.spinner-container').toggleClass("d-none");
+                }
+            });
+        }
+
+        $(promoForm).on('submit', function(e) {
+            e.preventDefault();
+
+            $('.spinner-container').toggleClass("d-none");
+
+            let data = $(this).serialize();
+
+            console.log(data);
+
+            $.ajax({
+                url:"{% url 'promo-code' uuid %}",
+                type:'POST',
+                data:data,
+                success:function(response){
+                    if(response == "Success") {
+                        // reroute to 
+                        window.location.assign("{% url 'user-profile' uuid %}");
+                    } else {
+                        // display the error
+                        window.alert(response);
+                    }
+
+                    $('.spinner-container').toggleClass("d-none");
+                },
+                error:function(error) {
+                    $('.spinner-container').toggleClass("d-none");
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+<!-- <div id="paypal-button-container"></div>
+<div id="paypal-button-container"></div>
+<script src="https://www.paypal.com/sdk/js?client-id=AYNY1EZahVCYNWDa_L5MLRTO3IOqE4V-vJfiYWFuX7JOMbDUDvJIs-YLDFefM0_mK1pGxDrxDGlRE-Xw&vault=true" data-sdk-integration-source="button-factory"></script>
+<script>
+  paypal.Buttons({
+      style: {
+          shape: 'rect',
+          color: 'gold',
+          layout: 'vertical',
+          label: 'subscribe',
+          
+      },
+      createSubscription: function(data, actions) {
+        return actions.subscription.create({
+          'plan_id': 'P-8M253739RD267825AL4PR2CY'
+        });
+      },
+      onApprove: function(data, actions) {
+        alert(data.subscriptionID);
+      }
+  }).render('#paypal-button-container');
+</script>
+</script> -->

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Pay using PayPal{% endblock %}
+{% block content %} 
+     <div class="container text-center mt-5">
+        <p class="small">Payment cancelled.</p>
+        <a href="{% url 'process-payment' details %}" class="btn cust-btn">
+            <small>Retry</small>
+        </a>
+     </div>
+       <script>
+        $('.spinner-message').text("Saving data ..."); 
+        $('.spinner-container').toggleClass("d-none");
+    </script>
+    
+{% endblock %}

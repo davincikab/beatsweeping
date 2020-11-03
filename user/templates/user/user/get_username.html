@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1em;
+    }
+
+    .container .inner_container {
+        box-shadow: 2px 2px 0.2em #343434;
+        padding: 1em 1.5em;
+    }
+</style>
+    <div class="container mt-5">
+        <div class="inner_container">
+            <form action="" method="post" class="my-3">
+                {% csrf_token %}
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            Email
+                        </span>
+                    </div>
+                    <input type="email" name="email" required>
+                </div>
+               
+                <div class="input-group input-group-sm my-3 submit-section">
+                    <button class="btn cust-btn w-50" type="submit">
+                        <small>Submit</small>
+                    </button>
+                </div>
+            </form>
+
+            {% if username and username != 'None' %}
+                <div class="text-small">Your username is <b>{{username}}</b>. <a href="{% url 'login' %}" class=""> Login</a></div>
+            {% elif username == 'None' %}
+                <div class="text-small">No user with such email. <a href="{% url 'home' %}" class="">Register ?</a></div>
+            {% else %}
+
+            {% endif %}
+        </div>
+        
+    </div>
+
+    <script>
+        $('.spinner-message').text("Saving data ..."); 
+        $('.spinner-container').toggleClass("d-none");
+    </script>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .container {
+        padding-top:10vh;
+        font-size:0.9rem;
+        height:100vh;
+    }
+
+    form {
+        margin:10px auto;
+        box-shadow:0.1em 0.1em 0.4em #2b2a2add;
+        padding:2em;
+    }
+
+    .submit-section {
+        display: flex;
+        justify-content: center;
+    }
+</style>
+<div class="container ">
+    {% if next %} 
+        {{next}}
+        {% if user.is_authenticated %} 
+            <p class="text-center">Your account doesn't have access to this page. To proceed, please login with an account that has access.</p> 
+        {% else %} 
+             <p class="text-center">Please login to continue.</p> 
+        {% endif %} 
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}" class="login-form text-center"> 
+       <!-- <div> -->
+        <h5 class=""> Login</h5>
+        {% if form.errors %} 
+            <p style="color:red;">Your username and password didn't match. Please try again.</p> 
+        {% endif %}
+        {% csrf_token %} 
+        <div class="input-group input-group-sm ">
+            
+            <div class="input-group-prepend ">
+                <span class="input-group-text" id="basic-addon1">
+                    {{ form.username.label }} 
+                </span>
+            </div>
+            {{ form.username }} 
+        </div>
+
+        <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">
+                    {{ form.password.label }}
+                </span>
+            </div>
+            
+            {{ form.password }} 
+        </div>
+
+        <div class="input-group input-group-sm my-3 submit-section">
+            <button class="btn cust-btn w-50">
+                <small>Login</small>
+            </button>
+        </div>
+
+        <small class="mt-5">Forgot Password ? <a href="{% url 'password_reset' %}">Reset Password. </a></small>
+        <small class="mt-5">Forgot Username ? <a href="{% url 'get-username' %}">Get Username</a></small>
+        
+    <!-- </div> -->
+    </form>
+
+    <section class="text-center">
+        {% comment %} <small>Create an Account <a href="{% url 'register' %}">Register ?</a></small> {% endcomment %}
+    </section>
+    
+    
+</div>
+  <script>
+        $('.spinner-message').text("Saving data ..."); 
+        $('.spinner-container').toggleClass("d-none");
+
+        var inputs = document.querySelectorAll("input:not([type='checkbox'])");
+
+        function addClassFormControl(inputs) {
+            inputs.forEach(input => {
+                if(!input.classList.contains('form-control')){
+                    input.classList.add('form-control', 'form-control-sm');
+                    input.classList.add('form-control-sm');
+                }
+                                
+            });
+        }
+
+        addClassFormControl(inputs);
+    </script>
+
+{% endblock %}
+

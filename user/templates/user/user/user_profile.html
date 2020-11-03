@@ -1,0 +1,518 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .row {
+        font-size: 0.8rem;
+    }
+
+    .col-md-6 {
+        padding-right: 0;
+    }
+
+    .container {
+        margin:0 auto;
+    }
+</style>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <div id="map"></div>
+            <div id="logoContainer">
+                <img src="/logo.png" width="85">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h6 class="text-center mt-2">{{ title }}</h6>
+            <p class="text-center text-small">Zoom all the way in and Click on 1 to 4 street sections. Then ↓Scroll down↓ Enter your Email and hit Submit</p>
+            <form action="" class="form-horizontal" method="POST" id="user-data">
+                {% csrf_token %}
+                <div class="mb-2" id="formdiv">
+                    
+                </div>
+                {% for field in form %}
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                        <div class="form-group my-2 d-flex justify-content-between">
+                            {{ field.label }}
+                            <label class="switch ">
+                                {{field}}
+                                <small class="slider"></small>
+                            </label>
+                        </div>
+
+                    {% else %}
+                        <div class="form-group">
+                            {{ field.errors }}
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% if field.label  == 'Phone Number' %}
+                                <small class="text-small ml-2">Phone number format: 992-998-1233</small>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <div class="form-group">
+                    <button class="btn cust-btn">
+                        <small>Update</small>
+                    </button>
+                </div>
+            </form>
+            {% if sections %} 
+                <div id="user_data" style="display: none;">
+                    {{sections}}
+                </div>
+            {% endif %}
+        </div>
+    <div>
+</div>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
+
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoicmFtejg1OCIsImEiOiJjazl1N3ZxYnUxa2dlM2dtb3ozemhtZWJ2In0.c7Pc5LCE0rvGoJ6hZYEftg';
+    var values=[];
+
+    var userData = '';
+    var dataElement = document.getElementById('user_data');
+
+    if(dataElement) {
+        userData = eval($(dataElement).text());
+        console.log(userData);
+    }
+
+
+    var isDeselected = false;
+    var map = new mapboxgl.Map({
+        container: 'map', // container id
+        // style: 'mapbox://styles/ramz858/cka73jjmq0fvc1ip5u2qcre0r', 
+        // style: 'mapbox://styles/ramz858/ckbrdl2p30o5v1kqmu0r1t8ud',
+        style: 'mapbox://styles/ramz858/ckbx684hi1m4m1inxh6sdnxwv', 
+        center: [-117.25015,32.74777], // starting position [lng, lat]
+        zoom: 10, // starting zoom
+        minZoom:10,
+        maxZoom:16.9,
+        
+        //disable map pitch
+        maxPitch:0
+    });
+    
+    
+    // / Add geolocate control to the map.
+    map.addControl(
+        new mapboxgl.GeolocateControl({
+            positionOptions: {
+            enableHighAccuracy: true
+            },
+            trackUserLocation: true
+        }),
+        'top-left'
+    );
+        // disable map rotation using right click + drag
+    map.dragRotate.disable();
+    map.dragRotate.pitchWithRotate = false;
+
+
+    
+    // disable map rotation using touch rotation gesture WORKS rotate
+    map.touchZoomRotate.disableRotation();
+
+
+    var selectedRoads = {
+            "type": "FeatureCollection",
+            "features": []
+        };
+    
+    map.addControl(
+        new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            collapsed: true
+        })
+    );
+
+    map.on('load', function() {
+        // Route source and layer
+
+        map.addSource('route', {
+            type: 'vector',
+            url: 'mapbox://ramz858.ckbrddrjh00u222o5ufdwlt2r-6mw1r',
+            buffer: 500     
+        });
+
+        map.addLayer(
+            {
+                'id': 'route',
+                'type': 'line',
+                'source': 'route',
+                'source-layer': 'csvnew',
+                'layout': {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                    
+                },
+                'paint': {
+                    'line-color': '#888',
+                    'line-width': 45,
+                    'line-opacity': 0  
+                }
+        });
+
+
+    // Selected roads source and layer
+      map.addSource('selectedRoad', {
+            "type": "geojson",
+            "data": selectedRoads
+        });
+
+        map.addLayer({
+            "id": "selectedRoad",
+            "type": "line",
+            "source": "selectedRoad",
+            "layout": {
+                "line-join": "round",
+                "line-cap": "round"
+            },
+            "paint": {
+                "line-color": "yellow",
+                "line-width":8,
+                "line-opacity": .8
+                
+            }
+        });
+    
+        map.addLayer({
+        "id": "tip2-copy-4",
+        "type": "symbol",
+        "source": "selectedRoad",
+        // "source-layer": "tip2",
+        "layout": {
+            "symbol-placement": "line-center",
+            "text-font": ["Roboto Bold Italic", "Arial Unicode MS Regular"],
+            "text-size": 10,
+            "text-allow-overlap": true,
+            "text-anchor": "bottom",
+            "text-keep-upright": false,
+            "text-field": ["get", "dl1"],
+            "text-radial-offset": 2.9
+        },
+        "paint": {
+            "text-halo-color": "hsl(0, 3%, 100%)",
+            "text-halo-width": 1,
+            "text-color": "hsl(120, 98%, 44%)"
+        }
+    });
+
+    map.addLayer({
+        "id": "tip2-copy-3",
+        "type": "symbol",
+        "source": "selectedRoad",
+        // "source-layer": "tip2",
+        "layout": {
+            "symbol-placement": "line-center",
+            "text-font": ["Roboto Bold Italic", "Arial Unicode MS Regular"],
+            "text-size": 10,
+            "text-allow-overlap": true,
+            "text-anchor": "top",
+            "text-keep-upright": false,
+            "text-field": ["get", "dl2"],
+            "text-radial-offset": 2.9
+        },
+        "paint": {
+            "text-halo-color": "hsl(0, 3%, 100%)",
+            "text-halo-width": 1,
+            "text-color": "hsl(120, 98%, 44%)"
+        }
+    });
+    
+    // Change the cursor to a pointer when the mouse is over the states layer.
+    map.on('mouseenter', 'route', function () {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Change it back to a pointer when it leaves.
+     map.on('mouseleave', 'route', function () {
+        map.getCanvas().style.cursor = '';
+    });
+
+    // hide the spinner
+    $('.spinner-container').toggleClass("d-none");
+
+    // handle route layer click events
+    map.on('click', 'route', function(e) {
+        console.log(e.point);
+
+        var features = map.queryRenderedFeatures(e.point, { layers: ['route'] });
+
+        if (!features.length) {
+            return;
+        }
+
+        var feature = features[0];
+
+        // Check if the selection is four layerrs
+        if( selectedRoads.features.length == 4) {
+
+            if (isFeatureSelected(feature, selectedRoads)) {
+
+                    selectedRoads = filterSelectedRoads(feature);
+
+                    updateSelectedRoad(selectedRoads);
+
+                    // remove the  deselected form group
+                    var id = feature.properties.oid;
+                     $('#' + id).remove();
+
+                
+            } else {
+               alert("Cannot add any more boxes");
+            }
+
+            return ;
+
+        } else {
+
+            // if selected feature prompt the user to deselect 
+            if(isFeatureSelected(feature, selectedRoads)) {
+
+                // filter the data 
+                var id = feature.properties.oid;
+                selectedRoads = filterSelectedRoads(feature);
+                updateSelectedRoad(selectedRoads);
+                 $('#' + id).remove();
+
+
+                return ;
+
+            } else {
+                selectedRoads.features.push(feature);
+
+                updateSelectedRoad(selectedRoads);
+
+                var coordinates = e.features[0].geometry.coordinates.slice();
+                var att = e.features[0].properties;
+
+
+                // append values to form input
+                var index = selectedRoads.features.length;
+                appendFormInput(att, index);
+
+                // Scroll to the form
+                if(selectedRoads.features.length == 4) {
+                    var element = document.getElementById("formdiv");
+                    var deviceWidth = document.documentElement.clientWidth;
+
+                    if(deviceWidth < 768) {
+                        element.scrollIntoView(true);
+                    }
+                    
+                }
+            }
+            
+        }
+    });
+    
+});
+
+// filter the sourcdata
+function filterSources(e){
+    // console.log(e);
+    if (e.sourceId == 'route' && e.isSourceLoaded && !e.hasOwnProperty('sourceDataType')){
+
+        // filter the data 
+        if(typeof userData  == 'object' && selectedRoads.features.length < 4){
+            filterData();
+        } 
+    }
+}
+
+map.on('sourcedata', filterSources);
+
+// add form input to the map
+function appendFormInput(att, index) {
+    // get the id
+    var id = att.oid;
+
+    // add a form input element
+    var data = "<div class='input-group input-group-sm' id='" + id + "'><div class='input-group-append' for='res_name'><span class='input-group-text' id='basic-addon1'>Street"+
+    "</span></div>" +
+    "<input type='text' class='form-control' name='res_name_"+ id+"' id='display_label_"+id+"' value='" + att.sl +
+    "' placeholder='Name' readonly> <div class='input-group-append'><span class='"+ id +" text-center input-group-text' role='button' data-target='" + id + "'>X</span></div></div>";
+
+
+    $("#formdiv").append(data);
+    
+    let closeBtn = $('.'+id);
+    addlistener(closeBtn);
+}
+
+// filter the selectedRoad from 
+function filterSelectedRoads (feature) {
+    selectedRoads.features = selectedRoads.features.filter(route => {
+        if (route.properties.oid != feature.properties.oid) {
+            return route;
+        }
+    });
+
+    return selectedRoads;
+}
+
+// update the selectedRoad source layer
+function updateSelectedRoad (selectedRoads) {
+    map.getSource('selectedRoad').setData(selectedRoads);
+}
+
+// add eventlistener to form deselect buttons
+function addlistener (element){
+    element.on('click', function (e) {
+        var id = $(this).attr('data-target');
+        console.log(id);
+
+        $('#' + id).remove();
+
+        // update the map data 
+        selectedRoads.features = selectedRoads.features.filter(route => {
+            if(route.properties.oid != parseInt(id)){
+                return route;
+            }
+        });
+
+        updateSelectedRoad(selectedRoads);
+    });
+}
+    // Close buttons
+var closeButtons = document.getElementsByClassName('close-btn');
+    for (const closeButton of closeButtons) {
+        closeButton.addEventLister('click', function (e) {
+            var id = $(this).attr('data-target');
+            console.log(id);
+
+            $('#' + id).remove();
+        });
+
+}
+
+// check if selected 
+function isFeatureSelected (feature, selectedRoads) {
+     var featureClicked = selectedRoads.features.find(route => {
+        if (route.properties.oid == feature.properties.oid) {
+            return route;
+        }
+    });
+
+    return Boolean(featureClicked);
+}
+
+// form submit event
+$('form').on('submit', function(e) {
+    e.preventDefault();
+
+    var data = $(this).serializeArray();
+    if( data.length == 4){
+        alert("Kindly Select atleast one road section");
+        return;
+    }
+
+    // add oid to the data
+    let length = data.length;
+    var [csrf, ...sections] = data;
+
+    {% comment %} get section {% endcomment %}
+    var sectionsData = sections.map(datum => {
+        if(datum.name.includes('res_name')) {
+            return datum;   
+        }
+    }).filter(dt => dt);
+    
+    sections = sections.slice(sectionsData.length, sections.length + 1);
+
+    sectionsData.forEach((section,i) => {
+        section.value = section.value+'_'+section.name.split('_')[2];
+        return section;
+    });
+    
+    console.log([csrf, ...sectionsData, ...sections]);
+    saveData([csrf, ...sectionsData, ...sections]);
+    
+    
+});
+
+function filterData(){
+    // filter the data with specific oid
+    filterFields = userData.map(field => field.split('_')[1]);
+
+    // filter the data
+    filterFields.forEach(oid => {
+        // let feature = data.features.find(feature => feature.properties.oid == oid);
+        var feature = map.querySourceFeatures('route',{
+            sourceLayer:'csvnew',
+            filter:["==","oid", parseInt(oid)]
+        });
+
+        if(feature[0]){
+            console.log(feature[0].geometry);
+
+            // update selected roads object
+            selectedRoads.features.push(feature[0]);
+
+            // update the form input
+            appendFormInput(feature[0].properties, 2);
+        }
+    });
+
+    // updated selected Roads source
+    updateSelectedRoad(selectedRoads);
+    fitToDataBounds();
+}
+
+// fit to mapbounds
+function fitToDataBounds() {
+    var bbox = turf.bbox(selectedRoads);
+    map.fitBounds(bbox,{
+        padding:50
+    });
+}
+
+// Save the value to a csv file
+function saveData (data) {
+    $('.spinner-message').text("Saving data ...");
+    $('.spinner-container').toggleClass("d-none");
+    
+    console.log(data);
+    // send the data to the backend
+    $.ajax({    
+        url:'',
+        data:data,
+        type:'POST',
+        success:function(response) {
+            console.log(response);
+            var res = JSON.parse(response);
+            console.log(res);
+
+            if(res.message == 'success'){
+                setTimeout(function(e){
+                    // window.location.assign('/form_view/'+res.user+'/');
+                    window.location.assign(res.navigate_to)
+                }, 1000);
+                
+            }else {
+                // add errors to the form
+                var errors = res.errors;
+                var keys = Object.keys(res.errors);
+
+                keys.forEach(key =>{
+                    $('input[name='+key+']').parent().before("<small class='text-danger error'>"+errors[key]+"</small>");
+                });
+
+                setTimeout(function(e){
+                    $('.spinner-container').toggleClass("d-none");
+                },1000)
+                
+
+            }
+        },
+        error:function(error){
+            console.log(error);
+            $('.spinner-container').toggleClass("d-none");
+        }
+    });
+}
+</script>
+{% endblock %}

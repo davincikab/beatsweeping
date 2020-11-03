@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% block content %}
+    <style>
+        .list-group-item {
+            font-size: 0.8em;
+            padding:0em 1em;
+        }
+        .col-md-6 {
+            {% comment %} padding:0; {% endcomment %}
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            display:flex;
+            justify-content:space-between;
+            color:var(--black);
+        }
+
+        p > span {
+            font-weight:500;
+        }
+
+        .list-group-item {
+            font-size: 0.9rem;
+            padding:0.5em 0.8em;
+        }
+
+        h5 {
+            font-size:1rem
+        }
+    </style>
+    <div class="container-fluid mt-5">
+        <div class="container mt-2">
+            <div class="row">
+                {% if user_info.info%}
+                <div class="col-md-6">
+                    <h5 class="">Streets</h5>
+                    {% comment %} Streets {% endcomment %}
+                    <div class="list-group">
+                        {% for section in user_info.sections %}
+                            <li class="list-group-item">{{ section }}</li>
+                        {% endfor %}
+                    </div>
+
+                    {% comment %} Notification Button {% endcomment %}
+                    <div class="form-group my-3 d-flex justify-content-between">
+                            {% if user_info.info.email_notification == "Y" %}
+                                <h5>Notification Enabled</h5>
+                            {% else %}
+                                <h5>Notification Disabled</h5>
+                            {% endif %}
+                            <label class="switch ">
+                                <input type="checkbox" name="notify" id="notify">
+                                <small class="slider"></small>
+                            </label>
+
+                            {% csrf_token %}
+                    </div>
+
+                    {% if user_info.info %}
+                        <small class="text-small">Click below to change your streets and settings</small><br>
+                        <a class="btn cust-btn mt-2" href="{% url 'update-profile' user_info.uuid %}">
+                            <small>Update Info</small>
+                        </a>
+                    {% endif %}
+
+                    {% comment %} Contact form {% endcomment %}
+                </div>
+
+                <div class="col-md-6">
+                    {% comment %} Streets {% endcomment %}
+                    <h5 class="card-title">User Information</h5>
+
+                    <div class="card">  
+                        <div class="card-body">
+                            <p><span>Name</span> {{ user_info.info.name}}</p>
+                            <p><span>Email</span> {{ user_info.info.email}} </p>
+                            <p><span>Number of Streets</span> {{user_info.sections|length }}</p>
+                            <p><span>Twelve hours</span> {{ user_info.info.get_twelve_hours_display}} </p>
+                            <p><span>One hour</span>{{ user_info.info.get_one_hour_display}}</p>
+                            <p><span>Phone Number</span> {{ user_info.info.phone_number }}</p>
+                            <p><span>Email Notification</span> {{ user_info.info.get_email_notification_display }}</p>
+                        </div>
+                    </div>
+
+                   
+                        <div class="payment-info">
+                            <h5>Subscription Information</h5>
+                             {% if user_info.is_subscribed == 'Y' %}
+                                <div class="">
+                                    <span>Subscribed</span>
+                                </div>
+                                
+                            {% else %}
+                            <a class="btn cust-btn mt-2 px-4" href="{% url 'process-payment' user_info.uuid  %}">
+                                <small>Subscribe</small>
+                            </a>
+                             {% endif %}
+                        </div>
+                    
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        
+        
+    </div>
+    <script>
+        var notificationCheckbox = $('#notify');
+        var notificationValue = '{{notify}}';
+
+        $('.spinner-message').text("Loading data ..."); 
+        $('.spinner-container').toggleClass("d-none");
+
+        // update the checkbox
+        if(notificationValue == 'Y'){
+            notificationCheckbox.attr('checked', true)
+        }else {
+            notificationCheckbox.attr('checked', false);
+        }
+
+        {% comment %} Deactivate Notification {% endcomment %}
+        notificationCheckbox.on('change', function(e){
+            let notify = notificationCheckbox;
+            let val = notify.prop('checked');
+
+            let token = $('input[name="csrfmiddlewaretoken"]').attr('value'); 
+            let data = {'csrfmiddlewaretoken':token};
+
+            console.log(token);
+            if(val) {
+                data['notify'] = 'Y';
+            } 
+            else {
+                data['notify'] = 'N';
+            }
+
+            console.log(data);
+           $('.spinner-message').text("Saving data ..."); 
+           $('.spinner-container').toggleClass("d-none");
+           $.ajax({
+                url:'/disable_notification/',
+                data:data,
+                type:'POST',
+                success:function(res){
+                    // Notify the user
+                    console.log(res);
+                    res = JSON.parse(res);
+                    if(res.message == 'success') {
+                         console.log(res);
+                        setTimeout(function(e){
+                            
+                            window.location.assign(res.navigate_to);
+                            $('.spinner-container').toggleClass("d-none");                             
+                        }, 200);
+                    }
+                },
+                error:function(error){
+                    // Make an alert
+                    console.log(error);
+                }
+            }); 
+        });
+    </script>
+{% endblock %}
