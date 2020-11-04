@@ -93,16 +93,28 @@
                 </button>
             </div>
         </form>
-        
+
+        {% if title == 'Register' %}
+            <p class="d-none">Street sweeping schedule</p>
+            <p class="mt-2"><span class="bold">COMPLETE PRIVACY</span><br>I don't track, store, or sell your location or contact info/history whatsoever. No spam. No gimmicks</p>             
+        {% endif %}
+    
     </div>
 </div>
 
 <div class="d-none" id="sections">
     {{ sections }}
 </div>
-{% endblock %}
 
+<div class="d-none" id="bounds">
+    {{ bounds }}
+</div>
+
+{% endblock %}
 {% block javascript %}
+    <script>
+        $('#id_username').blur();
+    </script>
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
     <script src="https://npmcdn.com/@turf/turf@5.1.6/turf.min.js"></script>

@@ -2,8 +2,14 @@ mapboxgl.accessToken = 'pk.eyJ1IjoicmFtejg1OCIsImEiOiJjazl1N3ZxYnUxa2dlM2dtb3oze
 var values=[];
 
 var userData = eval($("#sections").text());
+var featureBounds = $("#bounds").text();
 
-console.log(userData);
+if(featureBounds) {
+    featureBounds = featureBounds.trim().split(',');
+    featureBounds = featureBounds.map(coordinate => parseFloat(coordinate));
+}
+
+console.log(featureBounds);
 var bounds = [
     [-117.368317,32.650938], // Southwest coordinates
     [-117.020874,32.938386] // Northeast coordinates
@@ -82,7 +88,6 @@ var selectedRoads = {
 // load map layer
 map.on('load', function(e) {
     // Route source and layer
-
     map.addSource('route', {
         type: 'vector',
         //old with no dl time
@@ -177,6 +182,14 @@ map.on('load', function(e) {
             "text-color": "hsl(0, 100%, 50%)"
         }
     });
+
+    // fit map to selected features bounds
+    if(featureBounds.length == 4) {
+        // map.fitBounds(featureBounds,);
+
+        // filterFields = userData.map(field => field.split('_')[1]);
+        // filterData();
+    }
 
     // Change the cursor to a pointer when the mouse is over the states layer.
      map.on('mouseenter', 'route', function () {
@@ -377,6 +390,12 @@ $('#form').on('submit', function(e) {
         alert("Please click on at least one road section, you can change your roads anytime");
         return;
     }
+
+    // fit map to selected features bounds
+    fitToDataBounds();
+
+    // get the bounds object
+    let bbox = turf.bbox(selectedRoads);
  
      var data = $(this).serializeArray();
  
@@ -401,6 +420,11 @@ $('#form').on('submit', function(e) {
      });
      
      let formData = [csrf, ...sectionsData, ...sections];
+
+     bbox = bbox.map(coordinate => parseFloat(coordinate.toFixed(5)));
+
+     console.log(bbox);
+     formData.push({"name":"bounds", 'value':bbox.toString()});
 
      console.log(formData);
      saveData(formData);

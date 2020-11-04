@@ -17,6 +17,7 @@ class CustomUser(AbstractUser):
     disabled_notification = models.CharField("Notification", max_length=50, default='N')
     subscription_id = models.CharField(_("Subscription ID"), max_length=50, null=True)
     subscription_date = models.DateField("Subscription Date", blank=True, null=True)
+    bounds = models.CharField("Bounds", max_length=100)
 
     USER_NAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']

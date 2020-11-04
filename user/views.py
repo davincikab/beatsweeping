@@ -32,11 +32,16 @@ import json
 def update_profile(request):
     if request.POST:
         user = request.user
+        print("Bounds: " +request.POST.get('bounds'))
         streets_data = process_data(request.POST)
         message = create_update_profile(streets_data, user.email)
 
         if message != "Success":
             return message
+
+        print("Bounds" + request.POST.get('bounds'))
+        user.bounds = request.POST.get('bounds')
+        user.save()
         return JsonResponse({'message':'success', 'navigate_to':'/user_profile/'})
 
     else:
@@ -54,8 +59,11 @@ def update_profile(request):
             'email_notification':user_profile[0].email_notification
         }
 
+        # map bounds
+        bounds = user.bounds
         form = UserProfileForm(data)
-    return render(request, "index.html", {'form':form, 'sections':sections, 'title':'Update Streets'})
+
+    return render(request, "index.html", {'form':form, 'sections':sections, 'title':'Update Streets', 'bounds':bounds})
 
 class Login(LoginView):
     template_name = 'user/account/login.html'
@@ -64,7 +72,8 @@ class Logout(LogoutView):
     template_name = 'user/account/logout.html'
 
 def register(request):
-    if request.user:
+    print(request.user)
+    if request.user.username:
         print(request.user)
         return redirect('/update_profile/')
     if request.POST:
@@ -74,6 +83,7 @@ def register(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False
+            user.bounds = request.POST.get('bounds')
 
             user.save()
             print(form.cleaned_data)

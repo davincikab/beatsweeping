@@ -46,6 +46,21 @@
     align-items: center;
 }
 
+.bold {
+    font-weight: bold;
+    color: white;
+    font-style: italic;
+    /* -webkit-text-stroke: 1px #000000; */
+    text-shadow: 1px 2px 0px rgba(0,0,0,0.7);
+    letter-spacing: 1px;
+}
+
+h6 {
+    font-size: 1.2rem;
+    margin: 0 auto;
+    font-weight: bolder;
+    color: hsl(120, 0%, 25%);
+}
 @media (min-width:50em) {
 
     .col-md-4 {

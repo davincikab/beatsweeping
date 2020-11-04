@@ -28,7 +28,7 @@ class SignUpForm(UserCreationForm):
         )
     username = forms.CharField(label="Username", max_length=50, required=True,
         help_text = "Enter you username",
-        widget = forms.TextInput(attrs={'placeholder':'myusername', 'autofocus':False})
+        widget = forms.TextInput(attrs={'placeholder':'myusername', 'autofocus': ''})
     )
 
     password1 = forms.CharField(label="Password", max_length=50, required=True, 
