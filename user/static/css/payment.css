@@ -1,0 +1,51 @@
+#zoid-paypal-buttons-af25dbdfa5_mdu6mtm6mdm > iframe.component-frame {
+    z-index: 0 !important;
+}
+.col-md-2{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card {
+    height: 100%;
+    height: 25vh;
+    overflow: hidden;
+    box-shadow: 2px 2px 0.2em #ddd;    
+    border-width: 0px;    
+}
+
+.card .card-header {
+    padding: .3rem 1.25rem;
+    text-align: center;
+    background-color: rgb(247 247 247);
+    color: #040404;
+    border-width: 0px;
+}
+
+.card-header h5 {
+    font-size: 1.05rem;
+    margin: 0;
+}
+
+.submit-section {
+    bottom: 0;
+    position: absolute;
+}
+
+.container-fluid.row {
+    padding: 0.9em 1em;
+}
+
+#zoid-paypal-buttons-e0bf576319_mti6mty6mte {
+    z-index: 1 !important;
+}
+
+@media(min-width: 50em) {
+    .container-fluid {
+        display: flex;
+        justify-content: center;
+    }
+    .card {
+        height: 100%;
+    }
+}

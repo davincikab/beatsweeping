@@ -55,6 +55,10 @@ p {
     font-size: 1rem;
 }
 
+.box-shadow {
+    box-shadow: 2px 2px 0.2em #ddd;
+}
+
 /* utilities */
 .text-small {
     font-size: 0.8rem;

@@ -26,7 +26,7 @@
                             {% else %}
                                 <h5>Notification Disabled</h5>
                             {% endif %}
-                            
+
                             <label class="switch ">
                                 <input type="checkbox" name="notify" id="notify">
                                 <small class="slider"></small>
@@ -65,12 +65,14 @@
                         <div class="payment-info">
                             <h5>Subscription Information</h5>
                              {% if user_info.is_subscribed == 'Y' %}
-                                <div class="">
-                                    <span>Subscribed</span>
+                                <div class="text-muted">
+                                    <span class="subscribed">Subscribed</span>
                                 </div>
                                 
                             {% else %}
-                           
+                            <a class="btn cust-btn mt-2 px-4" href="{% url 'process-payment' %}">
+                                <small>Subscribe</small>
+                            </a>
                              {% endif %}
                         </div>
                     

@@ -1,7 +1,8 @@
 from django.urls import path, re_path
 
 from .views import update_profile, register, faq_view, contacts_page, email_sent, activate_account, \
-    Login, Logout, password_reset, user_section, disable_notifications
+    Login, Logout, password_reset, user_section, disable_notifications, process_promo_code, \
+    process_subscription, payment_canceled, payment_done
 
 from django.contrib.auth import views as auth_views
 
@@ -30,7 +31,14 @@ urlpatterns = [
     path('accounts/reset/done/', 
         auth_views.PasswordResetCompleteView.as_view(template_name="user/registration/password_reset_complete.html"), name='password_reset_complete'),
 
+    # Payment methods
+     path('process_payment/', process_subscription, name='process-payment'),
+    path('payment_done/', payment_done, name='payment-done'),
+    path('payment_cancelled/', payment_canceled, name='payment-cancelled'),
 
+    path('promo_code/', process_promo_code, name='promo-code'),
+
+    # Account activation
     path("activation_email/", email_sent, name="email-sent"),
     re_path(r'activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         activate_account, name='activate'),

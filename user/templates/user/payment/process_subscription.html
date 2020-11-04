@@ -1,59 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Pay using PayPal{% endblock %}
+{% load static %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/payment.css' %}">
+{% endblock %}
+
 {% block content %}
-    <style>
-    #zoid-paypal-buttons-af25dbdfa5_mdu6mtm6mdm > iframe.component-frame {
-        z-index: 0 !important;
-    }
-    .col-md-2{
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .card {
-        height: 100%;
-        height: 25vh;
-        overflow: hidden;
-        box-shadow: 2px 2px 0.2em #ddd;    
-        border-width: 0px;    
-    }
-
-    .card .card-header {
-        padding: .3rem 1.25rem;
-        text-align: center;
-        background-color: rgb(247 247 247);
-        color: #040404;
-        border-width: 0px;
-    }
-
-    .card-header h5 {
-        font-size: 1.05rem;
-        margin: 0;
-    }
-
-    .submit-section {
-        bottom: 0;
-        position: absolute;
-    }
-
-    .container-fluid.row {
-        padding: 0.9em 1em;
-    }
-
-    #zoid-paypal-buttons-e0bf576319_mti6mty6mte {
-        z-index: 1 !important;
-    }
-
-    @media(min-width: 50em) {
-        .container-fluid {
-            display: flex;
-            justify-content: center;
-        }
-        .card {
-            height: 100%;
-        }
-    }
-    </style>
     <div class="container-fluid row W-50 mt-5">
 
         <!-- <div class="col-md-2 text-center">
@@ -98,8 +51,11 @@
     </div>
     
     <script src="https://www.paypal.com/sdk/js?client-id=AYNY1EZahVCYNWDa_L5MLRTO3IOqE4V-vJfiYWFuX7JOMbDUDvJIs-YLDFefM0_mK1pGxDrxDGlRE-Xw&vault=true" data-sdk-integration-source="button-factory"></script>
+{% endblock %}
+
+{% block javascript %}
     <script>
-    var promoForm = document.getElementById("promo-form");
+            var promoForm = document.getElementById("promo-form");
     paypal.Buttons({
         style: {
             shape: 'rect',
@@ -122,7 +78,7 @@
         },
         onCancel:function(data) {
             // redirect to cancel 
-            window.location.assign("{% url 'payment-cancelled' uuid %}");
+            window.location.assign("{% url 'payment-cancelled' %}");
             console.log(data);
         },
         onError:function(error) {
@@ -153,7 +109,7 @@
             };
 
             $.ajax({
-                url:"{% url 'process-payment' uuid %}",
+                url:"{% url 'process-payment' %}",
                 type:'POST',
                 data:userData,
                 success:function(response){
@@ -162,7 +118,7 @@
 
                     console.log(responseObj);
                     if(responseObj.message == 'success') {
-                        window.location.assign("{% url 'user-profile' uuid %}");
+                        window.location.assign("{% url 'user-profile' %}");
                     }
 
                     $('.spinner-container').toggleClass("d-none");
@@ -184,13 +140,13 @@
             console.log(data);
 
             $.ajax({
-                url:"{% url 'promo-code' uuid %}",
+                url:"{% url 'promo-code' %}",
                 type:'POST',
                 data:data,
                 success:function(response){
                     if(response == "Success") {
                         // reroute to 
-                        window.location.assign("{% url 'user-profile' uuid %}");
+                        window.location.assign("{% url 'user-profile' %}");
                     } else {
                         // display the error
                         window.alert(response);
@@ -205,27 +161,3 @@
         });
     </script>
 {% endblock %}
-
-<!-- <div id="paypal-button-container"></div>
-<div id="paypal-button-container"></div>
-<script src="https://www.paypal.com/sdk/js?client-id=AYNY1EZahVCYNWDa_L5MLRTO3IOqE4V-vJfiYWFuX7JOMbDUDvJIs-YLDFefM0_mK1pGxDrxDGlRE-Xw&vault=true" data-sdk-integration-source="button-factory"></script>
-<script>
-  paypal.Buttons({
-      style: {
-          shape: 'rect',
-          color: 'gold',
-          layout: 'vertical',
-          label: 'subscribe',
-          
-      },
-      createSubscription: function(data, actions) {
-        return actions.subscription.create({
-          'plan_id': 'P-8M253739RD267825AL4PR2CY'
-        });
-      },
-      onApprove: function(data, actions) {
-        alert(data.subscriptionID);
-      }
-  }).render('#paypal-button-container');
-</script>
-</script> -->

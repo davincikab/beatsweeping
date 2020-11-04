@@ -7,12 +7,15 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib import messages
 from django.conf import settings
 from django.core import serializers
+
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
+from django.utils import timezone
 
 from .token_generator import account_activation_token
 from .send_mail import send_activation_mail
@@ -251,3 +254,56 @@ def disable_notifications(request):
 
 
 # PAYMENT
+
+@login_required
+def process_subscription(request):
+    if request.method == "POST":
+        # process the data and update the database
+        print(request.POST)
+        subscription_date = timezone.now()
+
+        user = request.user
+        user.is_subscribed = 'Y'
+        user.subscription_date = subscription_date.date()
+        user.subscription_id = request.POST.get('subscription_id')
+
+        user.save()
+        
+        return HttpResponse(json.dumps({'message':'success'}))
+
+    else:
+        return render(request, 'user/payment/process_subscription.html')
+
+@csrf_exempt
+def payment_done(request):
+    return render(request, 'user/payment/payment_done.html')
+
+@csrf_exempt
+def payment_canceled(request):
+    return render(request, 'user/payment/payment_cancelled.html')
+
+
+# Working with promo code
+def process_promo_code(request):
+    code = request.POST['promo_code']
+    
+    try:
+         promo_code = CouponCode.objects.get(code=code)
+    except CouponCode.DoesNotExist:
+        print('Inexistent Promo code')
+        return HttpResponse('Inexistent Promo code')
+
+    if promo_code.isUsed:
+        return HttpResponse('Promo Code has been used or expired')
+    else:
+        promo_code.isUsed = True
+        promo_code.save()
+
+        user = request.user
+        user.is_subscribed = 'Y'
+        user.subscription_date = timezone.now()
+        user.subscription_id = code
+
+        user.save()
+
+        return HttpResponse('Success')

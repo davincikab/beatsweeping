@@ -15,6 +15,8 @@ class CustomUser(AbstractUser):
     email = models.EmailField("Email", max_length=254, unique=True)
     is_subscribed = models.CharField("Subscription", default='N', max_length=5, choices=SMS_TIME)
     disabled_notification = models.CharField("Notification", max_length=50, default='N')
+    subscription_id = models.CharField(_("Subscription ID"), max_length=50, null=True)
+    subscription_date = models.DateField("Subscription Date", blank=True, null=True)
 
     USER_NAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
@@ -54,7 +56,7 @@ class UserProfile(models.Model):
 
 # Coupon Code;
 class CouponCode(models.Model):
-    code = models.CharField("Coupon Code", max_length=8, unique=True)
+    code = models.CharField("Coupon Code", max_length=5, unique=True)
     isUsed = models.BooleanField("Is Used", default=False)
     expiresOn = models.DateTimeField("Expires On", auto_now=False, auto_now_add=False)
 
