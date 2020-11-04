@@ -6,10 +6,11 @@
         <a href="{% url 'process-payment' %}" class="btn cust-btn">
             <small>Retry</small>
         </a>
-     </div>
-       <script>
-        $('.spinner-message').text("Saving data ..."); 
-        $('.spinner-container').toggleClass("d-none");
-    </script>
-    
+     </div>    
+{% endblock %}
+{% block javascript %}
+<script>
+    $('.spinner-message').text("Saving data ..."); 
+    $('.spinner-container').toggleClass("d-none");
+</script>
 {% endblock %}

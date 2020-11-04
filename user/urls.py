@@ -10,7 +10,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path("update_profile", update_profile, name="update-profile"),
+    path("update_profile/", update_profile, name="update-profile"),
     path('contacts/', contacts_page, name='contacts'),
     path('faqs/', faq_view, name='faq-view'),
     path('user_profile/', user_section, name='user-profile'),

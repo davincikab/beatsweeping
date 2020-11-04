@@ -4,9 +4,11 @@
     <div class="container text-center mt-5">
         <p>Payment done.</p>
         <small>Login to update the streets. <a href="{% url 'login' %}" class="">Login ?</a></small>
-    </div>  
-      <script>
-        $('.spinner-message').text("Saving data ..."); 
-        $('.spinner-container').toggleClass("d-none");
-    </script>
+    </div>
+{% endblock %}
+{% block javascript %}
+<script>
+    $('.spinner-message').text("Saving data ..."); 
+    $('.spinner-container').toggleClass("d-none");
+</script>
 {% endblock %}

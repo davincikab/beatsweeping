@@ -37,7 +37,7 @@ def update_profile(request):
 
         if message != "Success":
             return message
-        return JsonResponse({'message':'success', 'navigate_to':'/contacts/'})
+        return JsonResponse({'message':'success', 'navigate_to':'/user_profile/'})
 
     else:
         user = request.user
@@ -64,6 +64,9 @@ class Logout(LogoutView):
     template_name = 'user/account/logout.html'
 
 def register(request):
+    if request.user:
+        print(request.user)
+        return redirect('/update_profile/')
     if request.POST:
         form = SignUpForm(request.POST)
 
@@ -215,7 +218,7 @@ def activate_account(request, uidb64, token):
 
         # login the user and redirect to payment page
         login(request, user)
-        return redirect(f'/contacts/')
+        return redirect(f'/process_payment/')
 
         # return HttpResponse('Your account has been activated successfully')
     else:
@@ -257,7 +260,7 @@ def user_section(request):
     print(user_info)
     return render(request, 'user/account/user_info.html', {'user_info':user_info, 'notify':user.disabled_notification})
 
-
+# Disable user notification
 def disable_notifications(request):
     user = request.user
     if request.method == 'POST':
@@ -279,7 +282,6 @@ def disable_notifications(request):
 
 
 # PAYMENT
-
 @login_required
 def process_subscription(request):
     if request.method == "POST":

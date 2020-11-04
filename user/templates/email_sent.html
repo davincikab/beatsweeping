@@ -8,3 +8,9 @@
 {% block content %}
     <p class="text-small">Registration Details sent to your Email</p>
 {% endblock %}
+{% block javascript %}
+<script>
+    $('.spinner-message').text("Saving data ..."); 
+    $('.spinner-container').toggleClass("d-none");
+</script>
+{% endblock %}

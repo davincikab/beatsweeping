@@ -144,6 +144,8 @@
                 type:'POST',
                 data:data,
                 success:function(response){
+                    $('.spinner-container').toggleClass("d-none");
+                    
                     if(response == "Success") {
                         // reroute to 
                         window.location.assign("{% url 'user-profile' %}");
@@ -152,7 +154,7 @@
                         window.alert(response);
                     }
 
-                    $('.spinner-container').toggleClass("d-none");
+                   
                 },
                 error:function(error) {
                     $('.spinner-container').toggleClass("d-none");

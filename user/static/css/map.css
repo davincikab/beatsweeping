@@ -49,7 +49,7 @@
 @media (min-width:50em) {
 
     .col-md-4 {
-        margin-top:2em;
+        margin-top:0em;
     }
     #map {
         position:fixed;
