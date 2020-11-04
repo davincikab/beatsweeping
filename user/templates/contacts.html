@@ -1,57 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block title %} Street Sweeping: Contacts{% endblock %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/contacts.css' %}">
+{% endblock %}
 {% block content %}
     <style>
-        label, h6 {
-            font-size:1rem;
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #5a5a5a;
-        }
-
-        .address {
-            font-size:1rem;
-        }
-
-        form > p {
-            margin:0
-        }
-
-        .social-btns{
-            margin-top: 1em;
-        }
-        .social-btns .fa {
-            display: inline;
-            padding: 10px;
-            width: 20px;
-            text-align: center;
-            text-decoration: none;
-            margin: 5px 2px;
-            border-radius: 50%;
-        }
-
-        .fa:hover {
-            opacity: 0.7;
-        }
-
-        .fa-facebook {
-            background: #3B5998;
-            color: white;
-        }
-
-        .fa-twitter {
-            background: #55ACEE;
-            color: white;
-        }
-
-        .fa-google {
-            background: #dd4b39;
-            color: white;
-        }
-
-            .fa-linkedin {
-            background: #007bb5;
-            color: white;
-            }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<div class="container mt-5">
@@ -78,16 +32,16 @@
             <form class="form-horizontal" action=""method="POST">
                 {% csrf_token %}
                 {% for field in form %}
-                <p>
+                <div>
                     {{ field.label_tag }}<br>
                     {{ field }}
                     {% comment %} {% if field.help_text %}
                         <small style="display: inline">{{ field.help_text }}</small>
                     {% endif %} {% endcomment %}
                     {% for error in field.errors %}
-                        <p style="color: red">{{ error }}</p>
+                        <p style="color: red" class="text-small">{{ error }}</p>
                     {% endfor %}
-                </p>
+                </div>
                 {% endfor %}
                 <button type="submit" class="btn bg-brand mt-3">
                     <small>Send Mail</small>

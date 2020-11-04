@@ -21,17 +21,44 @@ body {
     overflow: hidden;
 }
 
+/* Navigation bar */
 .navbar {
     padding: 0 3em;
     background: var(--blue);
     text-shadow: 2px 2px .1px black;
     font-style: italic;
     color:var(--white);
-    /* position: fixed; */
+    position: fixed;
     width: 100vw;
     z-index: 3;
     opacity: 0.9;
     box-shadow: 2px 2px 0.3em rgb(61, 61, 61);
+}
+
+
+.navbar .navbar-toggler {
+    margin: 0.2em 0.1em;
+    padding: 0.2em;
+    color:var(--red);
+    font-size:1.65rem;
+}
+
+.navbar .navbar-toggler {
+    outline:1px var(--black);
+}
+
+.navbar
+.navbar-brand {
+    font-weight:800;
+    color:var(--white);
+    margin-right:3em;
+}
+
+.navbar-collapse {
+    border-width: 1px 0px 0px;
+    border-style: solid;
+    border-color: #eaeaea;
+    border-image: initial;
 }
 
 .navbar-nav li a {
@@ -158,4 +185,83 @@ input:focus + .slider:before {
 
 input:checked + .slider:before {
     transform:translateX(26px);
+}
+
+/* spinner */
+.spinner-container {
+    position: fixed;
+    top:0%;
+    bottom: 0%;
+    left: 0;
+    right:0;
+    background-color: hsla(0, 0%, 6%, 0.96);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner-box {
+    width:3em;
+    height:3em;
+    background-color: hsla(180, 100%, 50%, 0.664);
+    z-index: 4;
+    border-radius:50%;
+    transform-origin:50% 50%;
+    animation-name:pulseAnimation;
+    animation-duration: 1.3s;
+    animation-iteration-count: infinite;
+    animation-delay: .0s;
+    animation-timing-function:linear;
+}
+
+.spinner-message {
+    margin-top: 2em;
+    z-index: 4;
+    font-size: 1rem;
+    color: white;
+    font-style:italic;
+}
+
+
+@keyframes pulseAnimation {
+    0% {
+        opacity:0.7;
+        transform: scale(0.1);
+    }
+    100%{
+        opacity:0;
+        transform: scale(2.2);
+    }
+}
+
+@media(min-width: 50em) {
+    .spinner-box {
+        left: 45%;
+    }
+
+    .spinner-message{
+        left: 43%;
+        top:54%;
+    }
+
+    .login-form {
+        width:50%;
+    }
+    .navbar-collapse {
+        border-width: 0px;
+    }
+
+    .side-panel {
+        display:block;
+    }
+
+    .register-form {
+        box-shadow:none;
+        width:80%;
+    }
+    .button-section {
+        margin:0;
+    }
 }

@@ -21,7 +21,7 @@ from .token_generator import account_activation_token
 from .send_mail import send_activation_mail
 
 from .models import CouponCode, CustomUser, UserProfile
-from .forms import SignUpForm, UserProfileForm, PasswordResetForm
+from .forms import SignUpForm, UserProfileForm, PasswordResetForm, ContactForm
 
 
 import datetime
@@ -55,7 +55,7 @@ def update_profile(request):
         }
 
         form = UserProfileForm(data)
-    return render(request, "index.html", {'form':form, 'sections':sections, 'uuid':user.pk})
+    return render(request, "index.html", {'form':form, 'sections':sections, 'title':'Update Streets'})
 
 class Login(LoginView):
     template_name = 'user/account/login.html'
@@ -114,7 +114,7 @@ def register(request):
         form = SignUpForm()
         user_profile_form = UserProfileForm()
 
-        return render(request, "index.html", {'form':form, 'form_details':user_profile_form})
+        return render(request, "index.html", {'form':form, 'form_details':user_profile_form, 'title':'Register'})
 
 def email_sent(request):
     return render(request,'email_sent.html')
@@ -123,7 +123,32 @@ def faq_view(request):
     return render(request, "faq_views.html")
 
 def contacts_page(request):
-    return render(request, "contacts.html")
+    user = None
+    if request.user.is_authenticated:
+        user = request.user
+
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            # send the mail
+            message = f'{form.cleaned_data["email"]}, {form.cleaned_data["message"]}'
+
+            response = send_activation_mail(
+                settings.EMAIL_HOST_USER,
+                message,
+                form.cleaned_data['subject'],
+            )
+             
+            print(response)
+            return HttpResponse("Email successfully sent. Thank you.")
+    else:
+        form = ContactForm()
+        if user:
+            context = {'form':form, 'uuid':user.pk}
+        else:
+            context = {'form':form}
+        
+    return render(request, 'contacts.html', context)
 
 # Process Street section data
 def process_data(data):

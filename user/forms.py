@@ -28,7 +28,7 @@ class SignUpForm(UserCreationForm):
         )
     username = forms.CharField(label="Username", max_length=50, required=True,
         help_text = "Enter you username",
-        widget = forms.TextInput(attrs={'placeholder':'myusername',})
+        widget = forms.TextInput(attrs={'placeholder':'myusername', 'autofocus':False})
     )
 
     password1 = forms.CharField(label="Password", max_length=50, required=True, 
@@ -149,6 +149,15 @@ class PasswordResetForm(forms.Form):
 
             send_activation_mail(user.email, message, "BeatSweeping Password Reset")
         
+
+# Contact form
+class ContactForm(forms.Form):
+    subject = forms.CharField(max_length=100)
+    email = forms.EmailField(required=True)
+    message = forms.CharField(required=True, widget=forms.Textarea(attrs={'rows': 5}))
+
+    class Meta:
+        fields = ['email', 'message']
 
 # Contact form
 class ContactForm(forms.Form):

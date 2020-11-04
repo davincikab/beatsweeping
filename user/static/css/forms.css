@@ -10,6 +10,7 @@
 form {
     margin: 10px auto;
     box-shadow: 1px 1px 0.2em #2b2a2add;
+    /* box-shadow: 2px 2px 0.2em #ddd;     */
     padding: 1em;
     min-width: 35vw;
 }

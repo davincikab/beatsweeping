@@ -61,10 +61,11 @@
     
     
 </div>
-  <script>
-        $('.spinner-message').text("Saving data ..."); 
-        $('.spinner-container').toggleClass("d-none");
-    </script>
-
+{% endblock %}
+{% block javascript %}
+<script>
+    $('.spinner-message').text("Saving data ..."); 
+    $('.spinner-container').toggleClass("d-none");
+</script>
 {% endblock %}
 

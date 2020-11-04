@@ -15,10 +15,23 @@
     </div>
 
     <div class="col-md-4">
+
+        {% if title == 'Register' %}
+              <h6 class="text-center"> Your Text </h6>
+              <p><span class="bold">Get San Diego Street Sweeping Notifications</span><br>We'll send you text or email alerts 1 or 12 hours before Sweeping starts. Change your alerts anytime.<BR>$2/Month, cancel anytime.</p>
+             
+              <!--<p><span class="bold"><span class="cap">V</span>IEW <span class="cap">T</span>HE <span class="cap">S</span>WEEP <span class="cap">S</span>CHEDULES</span><br>Zoom all the way in & click on any red street to see the schedule</p> --> 
+              <p><span class="bold">View the Street Sweeping Schedules</span><br>Zoom all the way in & click on any red street to see the schedule.<br>
+              
+              <span class="bold">Sign up</span><br>
+              Click on 1 to 4 streets, enter your email, and hit submit. Not to worry, you can change your streets anytime. </p>
+            {% else %} 
+                <h6 class="text-center">{{ title }}</h6>
+            {% endif %}
+
         <!-- Form section -->
         <form action="" id="form" class="form-horizontal" method="POST">
             {% csrf_token %}
-            <h4 >Sign Up</h4>
             <div class="mt-1 px-2" id="street-form"></div>
             {% if data %}
                     <div class="input-group ml-2" style="display: none;">
@@ -44,7 +57,7 @@
 
                 {% else %}
                     {% if field.help_text %}
-                        <small class="text-small ml-2">{{ field.help_text }}</small>
+                        <small class="text-small text-muted ml-2">{{ field.help_text }}</small>
                     {% endif %}
                     <div class="input-group input-group-sm mb-1">
                         <div class="input-group-prepend">
