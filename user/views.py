@@ -227,7 +227,7 @@ def activate_account(request, uidb64, token):
         messages.success(request, message='Your account has been activated successfully')
 
         # login the user and redirect to payment page
-        login(request, user)
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         return redirect(f'/process_payment/')
 
         # return HttpResponse('Your account has been activated successfully')

@@ -23,14 +23,17 @@
                     <div class="form-group my-3 d-flex justify-content-between">
                             {% if user_info.info.email_notification == "Y" %}
                                 <h5>Notification Enabled</h5>
+                                <label class="switch ">
+                                    <input type="checkbox" name="notify" id="notify" checked>
+                                    <small class="slider"></small>
+                                </label>
                             {% else %}
                                 <h5>Notification Disabled</h5>
+                                <label class="switch ">
+                                    <input type="checkbox" name="notify" id="notify">
+                                    <small class="slider"></small>
+                                </label>
                             {% endif %}
-
-                            <label class="switch ">
-                                <input type="checkbox" name="notify" id="notify">
-                                <small class="slider"></small>
-                            </label>
 
                             {% csrf_token %}
                     </div>
