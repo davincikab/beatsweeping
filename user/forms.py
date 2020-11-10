@@ -158,12 +158,3 @@ class ContactForm(forms.Form):
 
     class Meta:
         fields = ['email', 'message']
-
-# Contact form
-class ContactForm(forms.Form):
-    subject = forms.CharField(max_length=100)
-    email = forms.EmailField(required=True)
-    message = forms.CharField(required=True, widget=forms.Textarea(attrs={'rows': 5}))
-
-    class Meta:
-        fields = ['email', 'message']
