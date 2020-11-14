@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib import messages
@@ -20,7 +20,7 @@ from django.utils import timezone
 from .token_generator import account_activation_token
 from .send_mail import send_activation_mail
 
-from .models import CouponCode, CustomUser, UserProfile
+from .models import CouponCode, CustomUser, UserProfile, Alert
 from .forms import SignUpForm, UserProfileForm, PasswordResetForm, ContactForm
 
 
@@ -344,3 +344,23 @@ def process_promo_code(request):
         user.save()
 
         return HttpResponse('Success')
+
+
+# alerts
+def get_alert(request, id):
+    if request.user:
+        logout(request)
+    
+    try:
+        Alert.objects.get(user_id=id)
+        return redirect("/login/")
+    except Alert.DoesNotExist:
+        try:
+            user = CustomUser.objects.get(pk = id)
+            Alert.objects.create(user_id=user.pk)
+
+            return redirect("/login/")
+        except CustomUser.DoesNotExist:
+            # redirect to signup page
+            return redirect("/")
+

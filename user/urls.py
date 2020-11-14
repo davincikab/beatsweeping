@@ -2,7 +2,7 @@ from django.urls import path, re_path
 
 from .views import update_profile, register, faq_view, contacts_page, email_sent, activate_account, \
     Login, Logout, password_reset, user_section, disable_notifications, process_promo_code, \
-    process_subscription, payment_canceled, payment_done
+    process_subscription, payment_canceled, payment_done, get_alert
 
 from django.contrib.auth import views as auth_views
 
@@ -19,6 +19,7 @@ urlpatterns = [
     path('login/', Login.as_view(), name='login'),
     path('logout/', Logout .as_view(), name='logout'),
     path('disable_notification/', disable_notifications, name='disable-notification'),
+    path('alerts/<int:id>/', get_alert, name="alert"),
 
     # password reset
     path('accounts/password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
@@ -32,7 +33,7 @@ urlpatterns = [
         auth_views.PasswordResetCompleteView.as_view(template_name="user/registration/password_reset_complete.html"), name='password_reset_complete'),
 
     # Payment methods
-     path('process_payment/', process_subscription, name='process-payment'),
+    path('process_payment/', process_subscription, name='process-payment'),
     path('payment_done/', payment_done, name='payment-done'),
     path('payment_cancelled/', payment_canceled, name='payment-cancelled'),
 

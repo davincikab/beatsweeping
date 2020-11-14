@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser, UserProfile, CouponCode
+from .models import CustomUser, UserProfile, CouponCode, Alert
 
 # Register your models here.
 @admin.register(CustomUser)
@@ -21,3 +21,7 @@ class CouponAdmin(admin.ModelAdmin):
     list_display = ('code', 'isUsed', 'expiresOn')
     list_filter = ['isUsed']
     search_fields = ['code']
+
+@admin.register(Alert)
+class AlertAdmin(admin.ModelAdmin):
+    list_display = ('user_id',)

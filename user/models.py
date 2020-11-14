@@ -67,3 +67,16 @@ class CouponCode(models.Model):
 
     def __str__(self):
         return self.code
+
+class Alert(models.Model):
+    user_id = models.IntegerField("User Id", unique=True) 
+
+    class Meta:
+        verbose_name = _("Alert")
+        verbose_name_plural = _("Alerts")
+
+    def __str__(self):
+        return self.name
+
+    # def get_absolute_url(self):
+    #     return reverse("Alert_detail", kwargs={"pk": self.pk})
