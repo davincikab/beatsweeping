@@ -139,50 +139,6 @@ map.on('load', function(e) {
         }
     });
 
-    map.addLayer({
-    "id": "tip2-copy-4",
-    "type": "symbol",
-    "source": "selectedRoad",
-    // "source-layer": "tip2",
-    "layout": {
-        "symbol-placement": "line-center",
-        "text-font": ["Roboto Bold Italic", "Arial Unicode MS Regular"],
-        "text-size": 10,
-        "text-allow-overlap": true,
-        "text-anchor": "bottom",
-        "text-keep-upright": false,
-        "text-field": ["get", "DL2 TIME"],
-        "text-radial-offset": 2.9
-    },
-    "paint": {
-        "text-halo-color": "hsl(0, 3%, 100%)",
-        "text-halo-width": 1,
-        "text-color": "hsl(0, 100%, 50%)"
-    }
-    });
-
-    map.addLayer({
-        "id": "tip2-copy-3",
-        "type": "symbol",
-        "source": "selectedRoad",
-        // "source-layer": "tip2",
-        "layout": {
-            "symbol-placement": "line-center",
-            "text-font": ["Roboto Bold Italic", "Arial Unicode MS Regular"],
-            "text-size": 10,
-            "text-allow-overlap": true,
-            "text-anchor": "top",
-            "text-keep-upright": false,
-            "text-field": ["get", "DL1 TIME"],
-            "text-radial-offset": 2.9
-        },
-        "paint": {
-            "text-halo-color": "hsl(0, 3%, 100%)",
-            "text-halo-width": 1,
-            "text-color": "hsl(0, 100%, 50%)"
-        }
-    });
-
     // fit map to selected features bounds
     if(featureBounds.length == 4) {
         // map.fitBounds(featureBounds,);
@@ -202,10 +158,10 @@ map.on('load', function(e) {
     });
 
     map.on('click', 'route', function(e) {
-        console.log(e.point);
 
         var features = map.queryRenderedFeatures(e.point, { layers: ['route'] });
 
+        console.log(features);
         if (!features.length) {
             return;
         }
@@ -217,7 +173,7 @@ map.on('load', function(e) {
             updateSelectedRoad(selectedRoads);
 
             // remove the  deselected form group
-            var id = feature.properties.oid;
+            var id = feature.properties.OID;
             $('#' + id).remove();
         }
         else if(selectedRoads.features.length >= 4) {
@@ -279,13 +235,13 @@ function filterData(){
 
     // filter the data
     filterFields.forEach(oid => {
-        // let feature = data.features.find(feature => feature.properties.oid == oid);
+        // let feature = data.features.find(feature => feature.properties.OID == OID);
         var feature = map.querySourceFeatures('route',{
             //old no dl time
             sourceLayer:'csvnew',
             //sourceLayer:'CMB_NOTSIMPLE_2-coho6z',
             
-            filter:["==","oid", parseInt(oid)]
+            filter:["==","OID", parseInt(oid)]
         });
 
         if(feature[0]){
@@ -320,7 +276,7 @@ map.on('sourcedata', filterSources);
 // check if selected 
 function isFeatureSelected (feature, selectedRoads) {
     var featureClicked = selectedRoads.features.find(route => {
-       if (route.properties.oid == feature.properties.oid) {
+       if (route.properties.OID == feature.properties.OID) {
            return route;
        }
    });
@@ -331,12 +287,12 @@ function isFeatureSelected (feature, selectedRoads) {
 // add form input to the map
 function appendFormInput(att, index) {
     // get the id
-    var id = att.oid;
+    var id = att.OID;
 
     // add a form input element
     var data = "<div class='input-group input-group-sm my-1' id='" + id + "'><div class='input-group-append' for='res_name'><span class='input-group-text' id='basic-addon1'>Street"+
     "</span></div>" +
-    "<input type='text' class='form-control' name='res_name_"+ id+"' id='display_label_"+id+"' value='" + att.sl +
+    "<input type='text' class='form-control' name='res_name_"+ id+"' id='display_label_"+id+"' value='" + att.SL +
     "' placeholder='Name' readonly> <div class='input-group-append'><span class='"+ id +" text-center input-group-text' role='button' data-target='" + id + "'>X</span></div></div>";
 
 
@@ -349,7 +305,7 @@ function appendFormInput(att, index) {
 // filter the selectedRoad from 
 function filterSelectedRoads (feature) {
     selectedRoads.features = selectedRoads.features.filter(route => {
-        if (route.properties.oid != feature.properties.oid) {
+        if (route.properties.OID != feature.properties.OID) {
             return route;
         }
     });
@@ -372,7 +328,7 @@ function addlistener (element){
 
         // update the map data 
         selectedRoads.features = selectedRoads.features.filter(route => {
-            if(route.properties.oid != parseInt(id)){
+            if(route.properties.OID != parseInt(id)){
                 return route;
             }
         });
