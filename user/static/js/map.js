@@ -139,6 +139,48 @@ map.on('load', function(e) {
         }
     });
 
+    map.addLayer({
+        "id": "tip2-copy-4",
+        "type": "symbol",
+        "source": "selectedRoad",
+        "layout": {
+            "symbol-placement": "line-center",
+            "text-font": ["Roboto Bold Italic", "Arial Unicode MS Regular"],
+            "text-size": 10,
+            "text-allow-overlap": true,
+            "text-anchor": "bottom",
+            "text-keep-upright": false,
+            "text-field": ["get", "DL2 TIME"],
+            "text-radial-offset": 2.9
+        },
+        "paint": {
+            "text-halo-color": "hsl(0, 3%, 100%)",
+            "text-halo-width": 1,
+            "text-color": "black"
+        }
+    });
+
+    map.addLayer({
+        "id": "tip2-copy-3",
+        "type": "symbol",
+        "source": "selectedRoad",
+        "layout": {
+            "symbol-placement": "line-center",
+            "text-font": ["Roboto Bold Italic", "Arial Unicode MS Regular"],
+            "text-size": 10,
+            "text-allow-overlap": true,
+            "text-anchor": "top",
+            "text-keep-upright": false,
+            "text-field": ["get", "DL1 TIME"],
+            "text-radial-offset": 2.9
+        },
+        "paint": {
+            "text-halo-color": "hsl(0, 3%, 100%)",
+            "text-halo-width": 1,
+            "text-color": "black"
+        }
+    });
+
     // fit map to selected features bounds
     if(featureBounds.length == 4) {
         // map.fitBounds(featureBounds,);
