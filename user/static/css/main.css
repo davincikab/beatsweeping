@@ -23,7 +23,7 @@ body {
 
 /* Navigation bar */
 .navbar {
-    padding: 0 3em;
+    padding: 0.3rem 0.3em;
     background: var(--blue);
     text-shadow: 2px 2px .1px black;
     font-style: italic;
@@ -37,7 +37,7 @@ body {
 
 
 .navbar .navbar-toggler {
-    margin: 0.2em 0.1em;
+    /* margin: 0.2em 0.1em; */
     padding: 0.2em;
     color:var(--red);
     font-size:1.65rem;
@@ -237,6 +237,10 @@ input:checked + .slider:before {
 }
 
 @media(min-width: 50em) {
+    .navbar {
+        padding: 0 3em;
+    }
+
     .spinner-box {
         left: 45%;
     }
